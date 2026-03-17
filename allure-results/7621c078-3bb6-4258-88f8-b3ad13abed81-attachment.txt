@@ -1,0 +1,56 @@
+Error: getaddrinfo ENOTFOUND paypank-redis
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+  errno: -3008,
+  code: 'ENOTFOUND',
+  syscall: 'getaddrinfo',
+  hostname: 'paypank-redis'
+}
+Error: getaddrinfo ENOTFOUND paypank-redis
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+  errno: -3008,
+  code: 'ENOTFOUND',
+  syscall: 'getaddrinfo',
+  hostname: 'paypank-redis'
+}
+Error: getaddrinfo ENOTFOUND paypank-redis
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+  errno: -3008,
+  code: 'ENOTFOUND',
+  syscall: 'getaddrinfo',
+  hostname: 'paypank-redis'
+}
+Error: getaddrinfo ENOTFOUND paypank-redis
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+  errno: -3008,
+  code: 'ENOTFOUND',
+  syscall: 'getaddrinfo',
+  hostname: 'paypank-redis'
+}
+Error: getaddrinfo ENOTFOUND paypank-redis
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+  errno: -3008,
+  code: 'ENOTFOUND',
+  syscall: 'getaddrinfo',
+  hostname: 'paypank-redis'
+}
+Error: getaddrinfo ENOTFOUND paypank-redis
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+  errno: -3008,
+  code: 'ENOTFOUND',
+  syscall: 'getaddrinfo',
+  hostname: 'paypank-redis'
+}
+Error: getaddrinfo ENOTFOUND paypank-redis
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+    at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+  errno: -3008,
+  code: 'ENOTFOUND',
+  syscall: 'getaddrinfo',
+  hostname: 'paypank-redis'
+}
