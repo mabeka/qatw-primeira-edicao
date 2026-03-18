@@ -1,21 +1,20 @@
 pipeline {
     agent {
         docker {
-            image 'mabeka/playwright-nj:1.51.1'
+            image 'mabeka/playwright-java:1.58.2'
             args '--network qatw-primeira-edicao_skynet'
             alwaysPull true
         }
     }
     stages {
-        stage('Node.js Deps') {
+        stage('Deps') {
             steps {
-                sh 'npm install'
+                sh 'npm ci'
             }
         }
-        stage('E2E Tests') {
+        stage('Tests') {
             steps {
                 sh 'npx playwright test'
-                allure includeProperties: false, jdk: '', resultPolicy: 'LEAVE_AS_IS', results: [[path: 'allure-results']]
             }
         }
     }
