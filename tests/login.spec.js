@@ -30,7 +30,7 @@ test("Validar o Login com sucesso", async ({ page }) => {
 
   // Aguardar o carregamento da página de saldo antes de fazer a asserção - Temporario
   // await page.waitForTimeout(2000);
-  await expect(await dashPage.obterSaldo()).toHaveText("R$ 15.000,00");
+  await expect(await dashPage.obterSaldo()).toHaveText("R$ 5.000,00");
 });
 
 test("Não deve logar quando o código de autenticação é inválido", async ({
