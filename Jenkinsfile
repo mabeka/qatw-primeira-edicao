@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE = "mabeka/playwright-java:1.58.2"
-        NETWORK = "qatw-primeira-edicao_default"
-    }
-
     stages {
 
         stage('Checkout') {
@@ -17,10 +12,8 @@ pipeline {
         stage('Debug Workspace') {
             steps {
                 sh '''
-                    echo "Diretório atual:"
+                    echo "===== WORKSPACE ====="
                     pwd
-
-                    echo "Listando arquivos do workspace:"
                     ls -la
                 '''
             }
@@ -32,14 +25,16 @@ pipeline {
                     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                         sh """
                         docker run --rm \
-                          --network ${NETWORK} \
-                          -v ${WORKSPACE}:/app \
-                          -w /app \
-                          ${DOCKER_IMAGE} \
-                          sh -c "
+                        -v ${WORKSPACE}:/app \
+                        -w /app \
+                        mabeka/playwright-java:1.58.2 \
+                        sh -c "
                             echo '===== DEBUG /app =====' &&
-                            ls -la &&
-                            
+                            ls -la /app &&
+
+                            echo '===== VALIDANDO PACKAGE.JSON =====' &&
+                            cat /app/package.json &&
+
                             echo '===== NODE =====' &&
                             node -v &&
 
@@ -54,7 +49,7 @@ pipeline {
 
                             echo '===== RUN TESTS =====' &&
                             npx playwright test
-                          "
+                        "
                         """
                     }
                 }
@@ -65,10 +60,6 @@ pipeline {
             steps {
                 sh '''
                     echo "Publicando resultados do Allure..."
-
-                    mkdir -p allure-results
-
-                    echo "Conteúdo do allure-results:"
                     ls -la allure-results || true
                 '''
             }
@@ -79,14 +70,6 @@ pipeline {
         always {
             archiveArtifacts artifacts: 'allure-results/**', fingerprint: true
             echo 'Pipeline finalizada.'
-        }
-
-        success {
-            echo 'Build SUCCESS'
-        }
-
-        failure {
-            echo 'Build FAILURE'
         }
     }
 }
