@@ -62,7 +62,7 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'allure-results/**', fingerprint: true
-            echo 'Pipeline finalizada.'
+            echo 'Pipeline finalizado.'
         }
 
         success {
