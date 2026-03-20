@@ -2,17 +2,11 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'mabeka/playwright-java:1.58.2'
-        NETWORK = 'qatw-primeira-edicao_default'
+        DOCKER_IMAGE = "mabeka/playwright-java:1.58.2"
+        NETWORK = "qatw-primeira-edicao_default"
     }
 
     stages {
-
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
 
         stage('Debug') {
             steps {
@@ -29,14 +23,14 @@ pipeline {
             steps {
                 script {
                     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                        sh """
+                        sh '''
                         docker run --rm \
-                        --network ${NETWORK} \
-                        -v "\$PWD":/app \
-                        -w /app \
-                        ${DOCKER_IMAGE} \
-                        sh -c "npm ci && npx playwright test"
-                        """
+                          --network ${NETWORK} \
+                          -v "$PWD:/app" \
+                          -w /app \
+                          ${DOCKER_IMAGE} \
+                          sh -c "npm ci && npx playwright test"
+                        '''
                     }
                 }
             }
@@ -46,8 +40,8 @@ pipeline {
             steps {
                 sh '''
                 echo "Publicando resultados do Allure..."
-                mkdir -p /allure-results
-                cp -r allure-results/* /allure-results || true
+                mkdir -p allure-results || true
+                ls -la allure-results || true
                 '''
             }
         }
@@ -55,18 +49,18 @@ pipeline {
 
     post {
         always {
-            echo 'Pipeline finalizada.'
+            echo "Pipeline finalizada."
 
-            // opcional: arquivar evidências
-            archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/test-results/**', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/allure-results/**', allowEmptyArchive: true
         }
 
         success {
-            echo 'Build SUCCESS'
+            echo "Build SUCCESS"
         }
 
         failure {
-            echo 'Build FAILURE'
+            echo "Build FAILURE"
         }
     }
 }
