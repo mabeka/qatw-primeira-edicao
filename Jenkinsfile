@@ -14,12 +14,13 @@ pipeline {
             }
         }
 
-        stage('Debug') {
+        stage('Debug Workspace') {
             steps {
                 sh '''
                     echo "Diretório atual:"
                     pwd
-                    echo "Arquivos:"
+
+                    echo "Listando arquivos do workspace:"
                     ls -la
                 '''
             }
@@ -32,14 +33,26 @@ pipeline {
                         sh """
                         docker run --rm \
                           --network ${NETWORK} \
-                          -v "\$(pwd):/app" \
+                          -v ${WORKSPACE}:/app \
                           -w /app \
                           ${DOCKER_IMAGE} \
                           sh -c "
-                            echo 'Node version:' && node -v &&
-                            echo 'NPM version:' && npm -v &&
+                            echo '===== DEBUG /app =====' &&
+                            ls -la &&
+                            
+                            echo '===== NODE =====' &&
+                            node -v &&
+
+                            echo '===== NPM =====' &&
+                            npm -v &&
+
+                            echo '===== INSTALL =====' &&
                             npm install &&
+
+                            echo '===== INSTALL PLAYWRIGHT =====' &&
                             npx playwright install &&
+
+                            echo '===== RUN TESTS =====' &&
                             npx playwright test
                           "
                         """
@@ -52,7 +65,10 @@ pipeline {
             steps {
                 sh '''
                     echo "Publicando resultados do Allure..."
+
                     mkdir -p allure-results
+
+                    echo "Conteúdo do allure-results:"
                     ls -la allure-results || true
                 '''
             }
@@ -62,7 +78,7 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'allure-results/**', fingerprint: true
-            echo 'Pipeline finalizado.'
+            echo 'Pipeline finalizada.'
         }
 
         success {
