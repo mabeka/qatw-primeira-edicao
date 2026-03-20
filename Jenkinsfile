@@ -1,35 +1,72 @@
 pipeline {
-    agent {
-        docker {
-            image 'mabeka/playwright-java:1.58.2'
-            args '--network qatw-primeira-edicao_skynet'
-        }
+    agent any
+
+    environment {
+        DOCKER_IMAGE = 'mabeka/playwright-java:1.58.2'
+        NETWORK = 'qatw-primeira-edicao_default'
     }
 
     stages {
 
-        stage('Deps') {
+        stage('Checkout') {
             steps {
-                sh 'npm ci'
+                checkout scm
             }
         }
 
-        stage('Tests') {
+        stage('Debug') {
+            steps {
+                sh '''
+                echo "Diretório atual:"
+                pwd
+                echo "Arquivos:"
+                ls -la
+                '''
+            }
+        }
+
+        stage('Run Tests (Docker)') {
             steps {
                 script {
                     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                        sh 'npx playwright test'
+                        sh """
+                        docker run --rm \
+                        --network ${NETWORK} \
+                        -v "\$PWD":/app \
+                        -w /app \
+                        ${DOCKER_IMAGE} \
+                        sh -c "npm ci && npx playwright test"
+                        """
                     }
                 }
             }
         }
 
-        stage('Allure Report') {
+        stage('Publish Allure Results') {
             steps {
-                allure includeProperties: false,
-                       jdk: '',
-                       results: [[path: 'allure-results']]
+                sh '''
+                echo "Publicando resultados do Allure..."
+                mkdir -p /allure-results
+                cp -r allure-results/* /allure-results || true
+                '''
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finalizada.'
+
+            // opcional: arquivar evidências
+            archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
+        }
+
+        success {
+            echo 'Build SUCCESS'
+        }
+
+        failure {
+            echo 'Build FAILURE'
         }
     }
 }
