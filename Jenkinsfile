@@ -8,13 +8,19 @@ pipeline {
 
     stages {
 
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Debug') {
             steps {
                 sh '''
-                echo "Diretório atual:"
-                pwd
-                echo "Arquivos:"
-                ls -la
+                    echo "Diretório atual:"
+                    pwd
+                    echo "Arquivos:"
+                    ls -la
                 '''
             }
         }
@@ -23,14 +29,20 @@ pipeline {
             steps {
                 script {
                     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                        sh '''
+                        sh """
                         docker run --rm \
                           --network ${NETWORK} \
-                          -v "$PWD:/app" \
+                          -v "\$(pwd):/app" \
                           -w /app \
                           ${DOCKER_IMAGE} \
-                          sh -c "npm ci && npx playwright test"
-                        '''
+                          sh -c "
+                            echo 'Node version:' && node -v &&
+                            echo 'NPM version:' && npm -v &&
+                            npm install &&
+                            npx playwright install &&
+                            npx playwright test
+                          "
+                        """
                     }
                 }
             }
@@ -39,9 +51,9 @@ pipeline {
         stage('Publish Allure Results') {
             steps {
                 sh '''
-                echo "Publicando resultados do Allure..."
-                mkdir -p allure-results || true
-                ls -la allure-results || true
+                    echo "Publicando resultados do Allure..."
+                    mkdir -p allure-results
+                    ls -la allure-results || true
                 '''
             }
         }
@@ -49,18 +61,16 @@ pipeline {
 
     post {
         always {
-            echo "Pipeline finalizada."
-
-            archiveArtifacts artifacts: '**/test-results/**', allowEmptyArchive: true
-            archiveArtifacts artifacts: '**/allure-results/**', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'allure-results/**', fingerprint: true
+            echo 'Pipeline finalizada.'
         }
 
         success {
-            echo "Build SUCCESS"
+            echo 'Build SUCCESS'
         }
 
         failure {
-            echo "Build FAILURE"
+            echo 'Build FAILURE'
         }
     }
 }
